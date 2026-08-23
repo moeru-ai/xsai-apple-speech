@@ -10,11 +10,12 @@
     "lint:fix": "eslint . --fix",
     "test": "vitest run && pnpm --filter @xsai-apple-speech/vitest-plugin-fakemic test",
     "test:unit": "vitest run --project unit",
-    "typecheck": "pnpm -r --if-present typecheck"
+    "typecheck": "tsc --noEmit && pnpm -r --if-present typecheck"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/node": "catalog:",
+    "bumpp": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-format": "catalog:",
     "tsdown": "catalog:",
