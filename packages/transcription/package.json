@@ -1,7 +1,7 @@
 {
   "name": "@xsai-apple-speech/transcription",
   "type": "module",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "description": "Shared xsAI Provider contract for Apple Speech transcription.",
   "license": "MIT",
   "repository": {
