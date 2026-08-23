@@ -31,6 +31,7 @@ import { computed, onMounted, onUnmounted, reactive, ref, shallowRef, useTemplat
 
 import AnimatedTranscript from './components/animated-transcript.vue'
 import LatencyLiveline from './components/latency-liveline.vue'
+
 import {
   appleSpeechProvider,
   createSpeechRequestConfiguration,

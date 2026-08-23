@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2023",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "paths": {
-      "@xsai-apple-speech/transcription": ["./packages/transcription/src/index.ts"],
-      "@xsai-apple-speech/transcription-electron-plugin": ["./packages/transcription-electron-plugin/src/index.ts"],
-      "@xsai-apple-speech/transcription-electron-plugin/events": ["./packages/transcription-electron-plugin/src/events.ts"],
-      "@xsai-apple-speech/transcription-electron-plugin/main": ["./packages/transcription-electron-plugin/src/main.ts"],
-      "@xsai-apple-speech/transcription-native": ["./packages/transcription-native/src/index.ts"],
-      "@xsai-apple-speech/vitest-plugin-fakemic": ["./packages/vitest-plugin-fakemic/src/index.ts"]
-    },
+    "target": "esnext",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": ["node", "vitest/globals"],
+    "types": [
+      "node",
+      "vitest/globals"
+    ],
     "allowJs": false,
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -24,5 +23,8 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "bump.config.ts"
+  ]
 }

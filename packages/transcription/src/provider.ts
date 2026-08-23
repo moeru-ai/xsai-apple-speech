@@ -8,6 +8,7 @@ import type {
   GetAppleSpeechLocalesOptions,
   LoadAppleSpeechOptions,
 } from './types'
+
 import { AppleSpeechUnavailableError } from './errors'
 import { assertSupportedLocale, canonicalizeLocale, canonicalizeLocales } from './locale'
 import { createStreamTranscriptionResult } from './stream-transcription'

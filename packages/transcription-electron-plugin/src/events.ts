@@ -10,6 +10,7 @@ import type {
   TranscriptionEvent,
   TranscriptionResult,
 } from '@xsai-apple-speech/transcription'
+
 import { defineInvokeEventa } from '@moeru/eventa'
 
 export interface GenerateTranscriptionRequest extends AppleSpeechRequestConfiguration {

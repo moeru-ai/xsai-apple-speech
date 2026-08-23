@@ -2,6 +2,7 @@ import { resolve } from 'node:path'
 import { arch, env } from 'node:process'
 
 import fakemic, { electron } from '@xsai-apple-speech/vitest-plugin-fakemic'
+
 import { defineConfig } from 'vitest/config'
 
 const exampleRoot = import.meta.dirname

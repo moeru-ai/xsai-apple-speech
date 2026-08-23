@@ -2,6 +2,7 @@ import type {
   AutomaticTranscriberOptions,
   SpeechTranscriberOptions,
 } from '@xsai-apple-speech/transcription'
+
 import type { NativeSpeechOptions, TranscriptionMode } from '../../types'
 
 import { merge } from '@moeru/std'

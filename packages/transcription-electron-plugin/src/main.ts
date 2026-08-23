@@ -3,7 +3,9 @@ import type {
   AppleSpeechProvider,
   TranscriptionResult,
 } from '@xsai-apple-speech/transcription'
+
 import type { AppleSpeechProtocolError, StreamInputFrame } from './events'
+
 import {
   defineInvokeHandler,
   defineStreamInvokeHandler,
@@ -16,8 +18,8 @@ import {
   createAbortError,
   streamTranscription,
 } from '@xsai-apple-speech/transcription'
-
 import { generateTranscription } from '@xsai/generate-transcription'
+
 import {
   appleSpeechGenerate,
   appleSpeechGetLocales,

@@ -1,4 +1,5 @@
 import type { AppleSpeechLocale } from './types'
+
 import { AppleSpeechLocaleError } from './errors'
 
 /**

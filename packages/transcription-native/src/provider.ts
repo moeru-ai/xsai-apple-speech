@@ -13,10 +13,12 @@ import type {
 import { randomUUID } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { arch } from 'node:process'
+
 import {
   createAbortError,
   createAppleSpeechProvider as createSharedAppleSpeechProvider,
 } from '@xsai-apple-speech/transcription'
+
 import { createNativeBinding } from './native-addon'
 import { parseOptions } from './transcribers/options'
 

@@ -1,4 +1,5 @@
 import type { Page } from 'playwright'
+
 import { expect } from 'vitest'
 
 import { audio } from './audio'

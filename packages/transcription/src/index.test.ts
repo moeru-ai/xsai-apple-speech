@@ -6,6 +6,7 @@ import type {
 
 import { generateTranscription } from '@xsai/generate-transcription'
 import { describe, expect, it, vi } from 'vitest'
+
 import {
 
   createAbortError,

@@ -1,4 +1,5 @@
 import type { AppleSpeechRequestConfiguration } from '@xsai-apple-speech/transcription'
+
 import type {
   NativeTranscriptionConfiguration,
   TranscriptionMode,

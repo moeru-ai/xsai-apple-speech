@@ -1,6 +1,8 @@
 import type { EventContext } from '@moeru/eventa'
 import type { AppleSpeechProvider, AppleSpeechProviderOperations, PartialTranscriptionEvent, TranscriptionResult } from '@xsai-apple-speech/transcription'
+
 import type { AppleSpeechProtocolError, StreamInputFrame } from './events'
+
 import {
   defineInvoke,
   defineStreamInvoke,
@@ -10,6 +12,7 @@ import {
   createAbortError,
   createAppleSpeechProvider as createSharedAppleSpeechProvider,
 } from '@xsai-apple-speech/transcription'
+
 import {
   appleSpeechGenerate,
   appleSpeechGetLocales,
