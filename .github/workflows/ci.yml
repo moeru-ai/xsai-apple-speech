@@ -9,22 +9,37 @@ permissions:
   contents: read
 
 jobs:
-  quality:
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22.18.0
           cache: pnpm
+
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
+
       - run: pnpm build
 
-  native:
+      - run: pnpm build:native
+
+      - run: CSC_IDENTITY_AUTO_DISCOVERY=false pnpm --filter @xsai-apple-speech/example-electron package
+
+      - run: pnpm --filter @xsai-apple-speech/example-electron test:fakemic
+
+      - run: pnpm lint
+
+      - run: pnpm test
+
+      - run: pnpm typecheck
+
+  build-test-native:
+    name: Native addon build test ${{ matrix.target }}
     strategy:
       matrix:
         include:
@@ -35,31 +50,46 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22.18.0
           cache: pnpm
+
       - run: pnpm install --frozen-lockfile
+
       - run: TARGET_ARCH=${{ matrix.target }} pnpm build:native
+
       - run: pnpm --filter @xsai-apple-speech/transcription-native test:native
+
       - uses: actions/upload-artifact@v4
         with:
           name: native-${{ matrix.target }}
           path: packages/transcription-native/npm/darwin-*/apple-speech-transcription.node
 
-  electron:
+  build-test-electron:
+    name: Electron build test ${{ matrix.target }}
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.18.0
+          node-version: lts/*
           cache: pnpm
+
       - run: pnpm install --frozen-lockfile
+
       - run: pnpm build:native
+
       - run: pnpm build
+
       - run: CSC_IDENTITY_AUTO_DISCOVERY=false pnpm --filter @xsai-apple-speech/example-electron package
+
       - run: test -f "examples/electron/dist/mac-arm64/xsAI Apple Speech Example.app/Contents/Resources/app.asar"
+
       - run: find examples/electron/dist -path '*app.asar.unpacked*' -name '*.node' -print -quit | grep .
