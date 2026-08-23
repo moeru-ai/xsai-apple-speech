@@ -1,0 +1,44 @@
+{
+  "name": "@xsai-apple-speech/transcription-native",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
+  "description": "Native macOS Apple Speech Provider for xsAI.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moeru-ai/xsai-apple-speech.git",
+    "directory": "packages/transcription-native"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "build:native": "bash scripts/build-native.sh",
+    "test:native": "swift test",
+    "test": "vitest run src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@moeru/std": "catalog:",
+    "@xsai-apple-speech/transcription": "workspace:^"
+  },
+  "optionalDependencies": {
+    "@xsai-apple-speech/transcription-native-darwin-arm64": "workspace:*",
+    "@xsai-apple-speech/transcription-native-darwin-x64": "workspace:*"
+  }
+}

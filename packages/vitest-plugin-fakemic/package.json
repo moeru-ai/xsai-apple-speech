@@ -1,0 +1,21 @@
+{
+  "name": "@xsai-apple-speech/vitest-plugin-fakemic",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Private fake-microphone runtime and Vitest integration.",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "playwright": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

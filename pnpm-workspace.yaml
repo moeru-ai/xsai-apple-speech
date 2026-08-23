@@ -1,0 +1,56 @@
+catalogMode: strict
+shellEmulator: true
+
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@5.7.2
+  - semver@6.3.1
+
+packages:
+  - packages/*
+  - packages/transcription-native/npm/*
+  - examples/*
+
+allowBuilds:
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  vue-demi: true
+
+patchedDependencies:
+  '@proj-airi/ui@0.11.3': patches/@proj-airi__ui@0.11.3.patch
+catalog:
+  '@antfu/eslint-config': ^9.3.0
+  '@electron-toolkit/preload': ^3.0.2
+  '@iconify-json/solar': 1.2.8
+  '@iconify-json/svg-spinners': ^1.2.4
+  '@moeru/eventa': ^1.0.0
+  '@moeru/std': 0.1.0-beta.17
+  '@proj-airi/ui': ^0.11.3
+  '@proj-airi/unocss-preset-chromatic': ^1.1.4
+  '@types/audioworklet': 0.0.100
+  '@types/node': ^25.0.0
+  '@unocss/reset': ^66.8.1
+  '@vitejs/plugin-vue': ^6.0.2
+  '@vueuse/core': ^14.2.1
+  '@xsai/generate-transcription': 0.5.0-beta.8
+  '@xsai/shared': 0.5.0-beta.8
+  animejs: ^4.5.0
+  electron: ^43.4.1
+  electron-builder: ^26.0.12
+  electron-vite: ^5.0.0
+  error-stack-parser: ^2.1.4
+  eslint: ^10.5.0
+  eslint-plugin-format: ^2.0.1
+  injeca: ^0.2.0
+  nanoid: ^6.0.1
+  playwright: ^1.58.2
+  reka-ui: ^2.10.3
+  tsdown: ^0.22.2
+  tsx: ^4.23.12
+  typescript: ^6.0.0
+  unocss: ^66.8.1
+  vite: ^7.3.6
+  vitest: ^4.1.0
+  vue: ^3.5.41
+  vue-tsc: ^3.2.5

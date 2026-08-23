@@ -1,0 +1,24 @@
+{
+  "name": "@xsai-apple-speech/transcription-native-darwin-arm64",
+  "version": "0.1.0-alpha.0",
+  "description": "Darwin arm64 native addon for xsAI Apple Speech.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moeru-ai/xsai-apple-speech.git",
+    "directory": "packages/transcription-native/npm/darwin-arm64"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "exports": {
+    ".": "./apple-speech-transcription.node",
+    "./package.json": "./package.json"
+  },
+  "main": "./apple-speech-transcription.node",
+  "files": [
+    "apple-speech-transcription.node"
+  ]
+}

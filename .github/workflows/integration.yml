@@ -1,0 +1,25 @@
+name: Apple Speech integration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fakemic:
+    continue-on-error: true
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:native
+      - run: pnpm build
+      - run: CSC_IDENTITY_AUTO_DISCOVERY=false pnpm --filter @xsai-apple-speech/example-electron package
+      - run: pnpm --filter @xsai-apple-speech/example-electron test:fakemic

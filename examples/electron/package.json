@@ -1,0 +1,90 @@
+{
+  "name": "@xsai-apple-speech/example-electron",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Complete Electron example for xsAI Apple Speech transcription.",
+  "author": "Moeru AI",
+  "main": "out/main/index.js",
+  "scripts": {
+    "build": "electron-vite build",
+    "dev": "pnpm prepare:native && electron-vite dev",
+    "fixture:fakemic": "tsx scripts/create-fakemic-fixture.ts",
+    "package": "pnpm build && electron-builder --dir",
+    "prepare:native": "pnpm --workspace-root build:native",
+    "test:fakemic": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts",
+    "test:fakemic:development": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts --project electron-development",
+    "test:fakemic:packaged": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts --project electron-packaged",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "catalog:",
+    "@moeru/eventa": "catalog:",
+    "@moeru/std": "catalog:",
+    "@proj-airi/ui": "catalog:",
+    "@vueuse/core": "catalog:",
+    "@xsai-apple-speech/transcription": "workspace:^",
+    "@xsai-apple-speech/transcription-electron-plugin": "workspace:^",
+    "@xsai-apple-speech/transcription-native": "workspace:^",
+    "@xsai/generate-transcription": "catalog:",
+    "animejs": "catalog:",
+    "error-stack-parser": "catalog:",
+    "injeca": "catalog:",
+    "nanoid": "catalog:",
+    "reka-ui": "catalog:",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@iconify-json/solar": "catalog:",
+    "@iconify-json/svg-spinners": "catalog:",
+    "@proj-airi/unocss-preset-chromatic": "catalog:",
+    "@types/audioworklet": "catalog:",
+    "@types/node": "catalog:",
+    "@unocss/reset": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@xsai-apple-speech/vitest-plugin-fakemic": "workspace:*",
+    "electron": "catalog:",
+    "electron-builder": "catalog:",
+    "electron-vite": "catalog:",
+    "playwright": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "unocss": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "build": {
+    "appId": "ai.moeru.xsai-apple-speech.example",
+    "productName": "xsAI Apple Speech Example",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "files": [
+      "out/**/*",
+      "package.json",
+      "!node_modules/@xsai-apple-speech/**/.build/**/*",
+      "!node_modules/@xsai-apple-speech/**/native/**/*",
+      "!node_modules/@xsai-apple-speech/**/Sources/**/*",
+      "!node_modules/@xsai-apple-speech/**/Tests/**/*",
+      "!node_modules/@xsai-apple-speech/**/src/**/*",
+      "!node_modules/@xsai-apple-speech/**/*.test.ts"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "entitlements": "resources/entitlements.mac.plist",
+      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "This example records microphone audio for live transcription.",
+        "NSSpeechRecognitionUsageDescription": "This example uses Apple Speech for on-device transcription."
+      },
+      "target": [
+        "dir"
+      ]
+    }
+  }
+}

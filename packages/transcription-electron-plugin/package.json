@@ -1,0 +1,54 @@
+{
+  "name": "@xsai-apple-speech/transcription-electron-plugin",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
+  "description": "Eventa Electron plugin and renderer Provider for xsAI Apple Speech.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moeru-ai/xsai-apple-speech.git",
+    "directory": "packages/transcription-electron-plugin"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./events": {
+      "types": "./dist/events.d.ts",
+      "import": "./dist/events.js"
+    },
+    "./main": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run src",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "electron": ">=39"
+  },
+  "peerDependenciesMeta": {
+    "electron": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@moeru/eventa": "catalog:",
+    "@xsai-apple-speech/transcription": "workspace:^",
+    "@xsai/generate-transcription": "catalog:"
+  }
+}

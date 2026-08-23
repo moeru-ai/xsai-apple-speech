@@ -1,0 +1,42 @@
+{
+  "name": "@xsai-apple-speech/transcription",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
+  "description": "Shared xsAI Provider contract for Apple Speech transcription.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moeru-ai/xsai-apple-speech.git",
+    "directory": "packages/transcription"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run src",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@xsai/generate-transcription": ">=0.5.0-beta.8 <0.6.0"
+  },
+  "dependencies": {
+    "@xsai/shared": "catalog:"
+  },
+  "devDependencies": {
+    "@xsai/generate-transcription": "catalog:"
+  }
+}

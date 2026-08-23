@@ -1,0 +1,20 @@
+diff --git a/src/components/form/field/field-input-file.vue b/src/components/form/field/field-input-file.vue
+index 9199661a957b0807f7a5e821d5f52dfa809146ff..7e4f34d0ac9ec463c78afe69423d97a330e5ca84 100644
+--- a/src/components/form/field/field-input-file.vue
++++ b/src/components/form/field/field-input-file.vue
+@@ -6,6 +6,7 @@ const props = defineProps<{
+   accept?: string
+   multiple?: boolean
+   placeholder?: string
++  inputClass?: string | string[]
+ }>()
+ 
+ const modelValue = defineModel<File[] | undefined>({ required: false })
+@@ -32,6 +33,7 @@ const modelValue = defineModel<File[] | undefined>({ required: false })
+         :accept="props.accept"
+         :multiple="props.multiple"
+         :placeholder="props.placeholder"
++        :class="props.inputClass"
+       />
+     </label>
+   </div>

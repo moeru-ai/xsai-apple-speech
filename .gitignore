@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+*.log
+*.tsbuildinfo
+.DS_Store
+examples/electron/out/
+examples/electron/release/
+examples/electron/tests/fixtures/
+packages/transcription-native/.build/
+packages/transcription-native/npm/*/*.node

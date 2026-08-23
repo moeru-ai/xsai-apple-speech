@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: Build native addon for ${{ matrix.architecture }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: arm64
+            runner: macos-26
+            target: arm64
+          - architecture: x64
+            runner: macos-26-intel
+            target: x86_64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: TARGET_ARCH=${{ matrix.target }} pnpm build:native
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-${{ matrix.architecture }}
+          path: packages/transcription-native/npm/darwin-${{ matrix.architecture }}/apple-speech-transcription.node
+
+  publish:
+    name: Publish npm packages
+    needs: native
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      NPM_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-arm64
+          path: packages/transcription-native/npm/darwin-arm64
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-x64
+          path: packages/transcription-native/npm/darwin-x64
+      - run: pnpm build
+      - name: Verify npm packages
+        run: pnpm -r publish --access public --no-git-checks --tag "$NPM_TAG" --dry-run
+      - name: Publish npm packages
+        run: pnpm -r publish --access public --no-git-checks --tag "$NPM_TAG"
