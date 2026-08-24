@@ -1,6 +1,6 @@
 {
   "name": "@xsai-apple-speech/transcription-native-darwin-arm64",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Darwin arm64 native addon for xsAI Apple Speech.",
   "license": "MIT",
   "repository": {
