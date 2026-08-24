@@ -1,5 +1,11 @@
 # xsAI Apple Speech
 
+[![npm version][npmx-version-src]][npmx-version-href]
+[![npm downloads][npmx-downloads-src]][npmx-downloads-href]
+[![bundle][bundle-src]][bundle-href]
+[![License][license-src]][license-href]
+[![JSDocs][jsdocs-src]][jsdocs-href]
+
 xsAI Apple Speech provides batch and live, on-device transcription through Apple's macOS Speech framework. It supports direct Node.js use and Electron renderers through the same Provider interface.
 
 The Provider uses `SpeechTranscriber` when it supports the selected locale. It falls back to `DictationTranscriber` when necessary.
@@ -162,3 +168,18 @@ pnpm build
 `pnpm build:native` builds the addon for the host architecture. `TARGET_ARCH=arm64` and `TARGET_ARCH=x86_64` select a release architecture on matching macOS 26 runners.
 
 The verification layers and accepted design are in [the initial design notes](./docs/initial-design-notes.md). The source decisions are recorded in [`docs/adr`](./docs/adr).
+
+## License
+
+MIT
+
+[npmx-version-src]: https://npmx.dev/api/registry/badge/version/@xsai-apple-speech/transcription
+[npmx-version-href]: https://npmx.dev/@xsai-apple-speech/transcription
+[npmx-downloads-src]: https://npmx.dev/api/registry/badge/downloads-month/@xsai-apple-speech/transcription
+[npmx-downloads-href]: https://npmx.dev/@xsai-apple-speech/transcription
+[bundle-src]: https://npmx.dev/api/registry/badge/size/@xsai-apple-speech/transcription
+[bundle-href]: https://bundlephobia.com/result?p=@xsai-apple-speech/transcription
+[license-src]: https://npmx.dev/api/registry/badge/license/@xsai-apple-speech/transcription
+[license-href]: https://github.com/moeru-ai/xsai-apple-speech/blob/main/LICENSE
+[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
+[jsdocs-href]: https://www.jsdocs.io/package/@xsai-apple-speech/transcription
