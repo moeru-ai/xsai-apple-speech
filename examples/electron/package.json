@@ -13,8 +13,6 @@
     "package": "pnpm build && electron-builder --dir",
     "prepare:native": "pnpm --workspace-root build:native",
     "test:fakemic": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts",
-    "test:fakemic:development": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts --project electron-development",
-    "test:fakemic:packaged": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts --project electron-packaged",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

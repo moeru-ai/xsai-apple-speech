@@ -6,7 +6,11 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "types": ["audioworklet", "node", "vite/client"],
+    "types": [
+      "audioworklet",
+      "node",
+      "vite/client"
+    ],
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false
   },

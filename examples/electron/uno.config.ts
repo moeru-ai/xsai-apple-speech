@@ -1,3 +1,5 @@
+import type { Preset } from 'unocss'
+
 import { presetChromatic } from '@proj-airi/unocss-preset-chromatic'
 import { defineConfig, presetIcons, presetWind4, transformerVariantGroup } from 'unocss'
 
@@ -39,7 +41,7 @@ export default defineConfig({
         primary: 0,
         complementary: 180,
       },
-    }),
+    }) as Preset,
   ],
   shortcuts: {
     'control-label': 'text-xs font-medium text-neutral-500 dark:text-neutral-400',
