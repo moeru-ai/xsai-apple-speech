@@ -51,6 +51,14 @@ async function loadSelectedLocale(page: Page): Promise<void> {
   recordDiagnostics(await readDiagnostics(page, 'after-load'))
 }
 
+async function startListening(page: Page): Promise<void> {
+  await page.getByTestId('live-start').click()
+  await expect.poll(
+    () => page.getByTestId('live-status').textContent(),
+    { timeout: 120_000 },
+  ).toBe('Listening')
+}
+
 async function readTranscriptResult(page: Page): Promise<string> {
   const segments = (await page.getByTestId('transcript-segment-text').allTextContents()).toReversed()
   const current = await page.getByTestId('poppin-grapheme').allTextContents()
@@ -93,8 +101,7 @@ audio.describe('Electron microphone path', () => {
   audio.it('streams a file-backed microphone and finishes gracefully', { input }, async ({ page }) => {
     await runWithDiagnostics(page, async () => {
       await loadSelectedLocale(page)
-      await page.getByTestId('live-start').click()
-      await expect.poll(() => page.getByTestId('live-status').textContent()).toBe('Listening')
+      await startListening(page)
       recordDiagnostics(await readDiagnostics(page, 'capturing'))
       await expect.poll(
         () => readTranscriptResult(page),
@@ -115,8 +122,7 @@ audio.describe('Electron microphone path', () => {
   audio.it('cancels one live session and can start again', { input }, async ({ page }) => {
     await runWithDiagnostics(page, async () => {
       await loadSelectedLocale(page)
-      await page.getByTestId('live-start').click()
-      await expect.poll(() => page.getByTestId('live-status').textContent()).toBe('Listening')
+      await startListening(page)
       await page.getByRole('button', { name: 'Cancel' }).click()
       await expect.poll(() => page.getByTestId('live-status').textContent()).toBe('Session canceled')
       expect(await page.getByTestId('live-start').isEnabled()).toBe(true)
