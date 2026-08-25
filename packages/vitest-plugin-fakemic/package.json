@@ -1,9 +1,14 @@
 {
-  "name": "@xsai-apple-speech/vitest-plugin-fakemic",
+  "name": "@proj-airi/vitest-plugin-fakemic",
   "type": "module",
-  "version": "0.1.0-alpha.0",
+  "version": "0.12.0-beta.1",
   "private": true,
-  "description": "Private fake-microphone runtime and Vitest integration.",
+  "description": "Fake microphone test runtime and Vitest integration",
+  "author": {
+    "name": "Moeru AI Project AIRI Team",
+    "email": "airi@moeru.ai",
+    "url": "https://github.com/moeru-ai"
+  },
   "license": "MIT",
   "exports": "./src/index.ts",
   "scripts": {

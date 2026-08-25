@@ -38,7 +38,7 @@ export interface AudioTestCase<PreflightContext = never> {
   preflight?: readonly AudioTestPreflightCallback<PreflightContext>[]
 }
 
-/** One runnable task derived from an audio case. */
+/** One runnable task derived from an audio test case. */
 export interface AudioTestTask {
   name: string
   input: URL
@@ -61,10 +61,6 @@ declare module 'vitest' {
   interface TaskMeta {
     audioTest?: AudioVitestTaskMetadata
   }
-
-  interface ProvidedContext {
-    fakemicRuntime: FakemicRuntime
-  }
 }
 
 /**
@@ -78,15 +74,28 @@ export interface AudioVitestPlan<Definition> {
   metadata: AudioVitestTaskMetadata
 }
 
-/** Test context exposed to an audio test callback. */
+/**
+ * Test context exposed to an audio test callback.
+ *
+ * @param Context - Fields added by the concrete audio framework.
+ */
 export type AudioVitestTaskContext<Context extends object> = TestContext & Context
 
-/** Callback for an audio task. */
+/**
+ * Callback for an audio task.
+ *
+ * @param Context - Fields added by the concrete audio framework.
+ */
 export type AudioTestHandler<Context extends object> = (
   context: AudioVitestTaskContext<Context>,
 ) => void | Promise<void>
 
-/** A Vitest-like test function that accepts an audio definition. */
+/**
+ * A Vitest-like test function that accepts an audio definition.
+ *
+ * @param Definition - The definition supplied by each test.
+ * @param Context - Fields exposed to the test callback.
+ */
 export interface AudioTestAPI<Definition, Context extends object> {
   (name: string, definition: Definition, handler: AudioTestHandler<Context>): void
   only: AudioTestAPI<Definition, Context>
@@ -95,7 +104,12 @@ export interface AudioTestAPI<Definition, Context extends object> {
   fails: AudioTestAPI<Definition, Context>
 }
 
-/** Configuration for a package-owned audio test interface. */
+/**
+ * Configuration for a package-owned audio test interface.
+ *
+ * @param Definition - The definition supplied by each test.
+ * @param Plan - One concrete task produced from that definition.
+ */
 export interface CreateAudioTestAPIOptions<Definition, Plan, PreflightContext> {
   createPlans: (name: string, definition: Definition) => Array<AudioVitestPlan<Plan>>
   execute: (options: {
@@ -128,10 +142,7 @@ export interface FakemicElectronRuntime {
   kind: 'electron'
   name: string
   prepare: string
-  /** Development main-process entry passed to the Electron executable. */
-  entry?: string
-  /** Packaged application executable launched instead of Playwright's Electron. */
-  executablePath?: string
+  entry: string
   args?: string[]
   cwd?: string
   env?: Record<string, string>
@@ -175,6 +186,12 @@ export interface FakemicPluginOptions {
   hookTimeout?: number
 }
 
+declare module 'vitest' {
+  interface ProvidedContext {
+    fakemicRuntime: FakemicRuntime
+  }
+}
+
 interface FakemicTaskExecution {
   run: (task: RunnerTestCase, invokeHandler: () => Promise<void>) => Promise<void>
 }
@@ -208,7 +225,9 @@ export function createAudioTestAPI<Definition, Plan, Context extends object, Pre
     for (const plan of plans) {
       const task = TestRunner.getCurrentSuite<Context>().task(plan.name, {
         ...this,
-        meta: { audioTest: plan.metadata },
+        meta: {
+          audioTest: plan.metadata,
+        },
         handler: async (context) => {
           await handler(context as AudioVitestTaskContext<Context>)
         },
@@ -228,7 +247,10 @@ export function createAudioTestAPI<Definition, Plan, Context extends object, Pre
     }
   })
 
-  return { describe, it: collector as TestAPI as AudioTestAPI<Definition, Context> }
+  return {
+    describe,
+    it: collector as TestAPI as AudioTestAPI<Definition, Context>,
+  }
 }
 
 /** Creates a Web runtime descriptor for one Fakemic project. */
@@ -245,15 +267,17 @@ export function electron(options: Omit<FakemicElectronRuntime, 'kind'>): Fakemic
 export default function fakemic(options: FakemicPluginOptions): UserWorkspaceConfig {
   return {
     test: {
-      environment: 'node',
-      fileParallelism: false,
-      hookTimeout: options.hookTimeout ?? 120_000,
-      include: options.include,
-      maxWorkers: 1,
       name: options.name,
-      provide: { fakemicRuntime: options.runtime },
+      include: options.include,
+      environment: 'node',
       runner: fileURLToPath(new URL('./runner.ts', import.meta.url)),
+      fileParallelism: false,
+      maxWorkers: 1,
       testTimeout: options.testTimeout ?? 180_000,
+      hookTimeout: options.hookTimeout ?? 120_000,
+      provide: {
+        fakemicRuntime: options.runtime,
+      },
     },
   }
 }
@@ -279,7 +303,10 @@ export function createAudioTestTask<PreflightContext = never>(
   name: string,
   testCase: AudioTestCase<PreflightContext>,
 ): AudioTestTask {
-  return { name, input: testCase.input }
+  return {
+    name,
+    input: testCase.input,
+  }
 }
 
 /** Launches the runtime selected by the current Vitest project. */
@@ -324,9 +351,6 @@ async function startWebFakemicRuntime<Session extends AudioTestSession>(runtime:
 }
 
 async function startElectronFakemicRuntime<Session extends AudioTestSession>(runtime: FakemicElectronRuntime, microphoneInput: string): Promise<Session> {
-  if (runtime.entry == null && runtime.executablePath == null)
-    throw new TypeError('A Fakemic Electron runtime requires entry or executablePath.')
-
   const temporaryUserData = runtime.temporaryUserData
   const userDataPath = temporaryUserData
     ? await mkdtemp(join(tmpdir(), temporaryUserData.prefix ?? 'fakemic-electron-'))
@@ -335,7 +359,7 @@ async function startElectronFakemicRuntime<Session extends AudioTestSession>(run
   const close = async () => {
     await app?.close()
     if (userDataPath)
-      await rm(userDataPath, { force: true, recursive: true })
+      await rm(userDataPath, { recursive: true, force: true })
   }
 
   try {
@@ -347,17 +371,13 @@ async function startElectronFakemicRuntime<Session extends AudioTestSession>(run
       launchEnvironment[temporaryUserData.env] = userDataPath
 
     app = await playwrightElectron.launch({
-      args: [
-        ...(runtime.entry == null ? [] : [runtime.entry]),
-        ...(runtime.args ?? []),
-        ...createChromiumFileMicrophoneArguments(microphoneInput),
-      ],
-      ...(runtime.cwd == null ? {} : { cwd: runtime.cwd }),
+      args: [runtime.entry, ...(runtime.args ?? []), ...createChromiumFileMicrophoneArguments(microphoneInput)],
+      cwd: runtime.cwd,
       env: launchEnvironment,
-      ...(runtime.executablePath == null ? {} : { executablePath: runtime.executablePath }),
     })
+    const launchedApp = app
     const module = await import(runtime.prepare) as FakemicPrepareModule<FakemicElectronPrepareContext, Session>
-    return await module.default({ app, close, runtime })
+    return await module.default({ app: launchedApp, close, runtime })
   }
   catch (error) {
     await close()
