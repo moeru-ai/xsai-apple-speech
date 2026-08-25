@@ -3,15 +3,11 @@ import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig } from 'electron-vite'
 
 export default defineConfig({
-  main: {
-    plugins: [externalizeDepsPlugin()],
-  },
-  preload: {
-    plugins: [externalizeDepsPlugin()],
-  },
+  main: {},
+  preload: {},
   renderer: {
     resolve: {
       alias: {

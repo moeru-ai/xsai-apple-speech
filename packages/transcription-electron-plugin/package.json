@@ -13,26 +13,35 @@
     "access": "public",
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
+        "types": "./dist/index.d.mts",
+        "import": "./dist/index.mjs"
       },
       "./events": {
-        "types": "./dist/events.d.ts",
-        "import": "./dist/events.js"
+        "types": "./dist/events.d.mts",
+        "import": "./dist/events.mjs"
       },
       "./main": {
-        "types": "./dist/main.d.ts",
-        "import": "./dist/main.js"
+        "types": "./dist/main.d.mts",
+        "import": "./dist/main.mjs"
       }
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts"
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts"
   },
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts",
-    "./events": "./src/events.ts",
-    "./main": "./src/main.ts"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./events": {
+      "types": "./dist/events.d.mts",
+      "import": "./dist/events.mjs"
+    },
+    "./main": {
+      "types": "./dist/main.d.mts",
+      "import": "./dist/main.mjs"
+    }
   },
   "files": [
     "README.md",

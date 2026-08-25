@@ -9,8 +9,6 @@ export default defineConfig({
     main: 'src/main.ts',
   },
   format: ['esm'],
-  platform: 'neutral',
   sourcemap: true,
-  target: 'es2022',
   treeshake: true,
 })

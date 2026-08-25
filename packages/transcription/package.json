@@ -13,16 +13,19 @@
     "access": "public",
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
+        "types": "./dist/index.d.mts",
+        "import": "./dist/index.mjs"
       }
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts"
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts"
   },
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
   },
   "files": [
     "README.md",
