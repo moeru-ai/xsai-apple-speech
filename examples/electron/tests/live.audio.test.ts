@@ -4,7 +4,9 @@ import { expect } from 'vitest'
 
 import { audio } from './audio'
 
-const input = new URL('./fixtures/hello.wav', import.meta.url)
+// AIRI's single-utterance pipeline fixture starts with silence and warm-up
+// speech so the microphone remains active while Electron prepares its graph.
+const input = new URL('./cases/apple-speech/input.test.wav', import.meta.url)
 
 async function readDiagnostics(page: Page, phase: string): Promise<Record<string, unknown>> {
   const devices = await page.evaluate(async () => {
@@ -26,7 +28,7 @@ async function readDiagnostics(page: Page, phase: string): Promise<Record<string
     loadProgress: await readOptionalText('load-progress'),
     loadStatus: await readOptionalText('capability-status'),
     microphonePermission: await readOptionalText('microphone-permission'),
-    partialTranscript: await readOptionalText('partial-transcript'),
+    partialTranscript: await readTranscriptResult(page),
     phase,
     sampleRate: await readOptionalText('microphone-sample-rate'),
     status: await readOptionalText('live-status'),
@@ -50,12 +52,12 @@ async function loadSelectedLocale(page: Page): Promise<void> {
 }
 
 async function readTranscriptResult(page: Page): Promise<string> {
-  const current = page.getByTestId('transcript-current')
-  if (await current.count() > 0)
-    return (await current.textContent())?.trim() ?? ''
-
-  const segment = page.getByTestId('transcript-segment-text').first()
-  return await segment.count() > 0 ? (await segment.textContent())?.trim() ?? '' : ''
+  const segments = (await page.getByTestId('transcript-segment-text').allTextContents()).toReversed()
+  const current = await page.getByTestId('poppin-grapheme').allTextContents()
+  return [...segments, current.join('')]
+    .map(value => value.trim())
+    .filter(Boolean)
+    .join(' ')
 }
 
 async function runWithDiagnostics(page: Page, run: () => Promise<void>): Promise<void> {
@@ -96,8 +98,8 @@ audio.describe('Electron microphone path', () => {
       recordDiagnostics(await readDiagnostics(page, 'capturing'))
       await expect.poll(
         () => readTranscriptResult(page),
-        { timeout: 120_000 },
-      ).not.toBe('')
+        { timeout: 60_000 },
+      ).toMatch(/please say hello/iu)
 
       await page.getByRole('button', { name: 'Finish' }).click()
       await expect.poll(
@@ -105,7 +107,7 @@ audio.describe('Electron microphone path', () => {
         { timeout: 120_000 },
       ).toBe('Transcript complete')
       await expect.poll(() => page.getByTestId('transcript-segment').count()).toBeGreaterThan(0)
-      expect((await page.getByTestId('transcript-segment-text').first().textContent())?.trim()).not.toBe('')
+      await expect.poll(() => readTranscriptResult(page)).toMatch(/please say hello/iu)
       recordDiagnostics(await readDiagnostics(page, 'complete'))
     })
   })

@@ -9,10 +9,9 @@
   "scripts": {
     "build": "electron-vite build",
     "dev": "pnpm prepare:native && electron-vite dev",
-    "fixture:fakemic": "tsx scripts/create-fakemic-fixture.ts",
     "package": "pnpm build && electron-builder --dir",
     "prepare:native": "pnpm --workspace-root build:native",
-    "test:fakemic": "pnpm fixture:fakemic && vitest run --config vitest.fakemic.config.ts",
+    "test:fakemic": "vitest run --config vitest.fakemic.config.ts",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

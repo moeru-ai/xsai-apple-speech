@@ -13,6 +13,8 @@ export default defineConfig({
         include: ['tests/**/*.audio.test.ts'],
         name: 'electron-development',
         runtime: electron({
+          // Chromium's sandboxed fake input cannot read the local WAV fixture.
+          args: ['--no-sandbox'],
           cwd: exampleRoot,
           entry: resolve(exampleRoot, 'out/main/index.js'),
           name: 'electron-development',
