@@ -45,6 +45,7 @@ const result = await generateTranscription({
   file: new Blob([audioBytes], { type: 'audio/wav' }),
 })
 
+// eslint-disable-next-line no-console
 console.log(result.text)
 ```
 
@@ -137,6 +138,7 @@ const writer = session.input.getWriter()
 await writer.write(float32MonoSamples)
 await writer.close()
 
+// eslint-disable-next-line no-console
 console.log(await session.text)
 ```
 
@@ -166,8 +168,6 @@ pnpm build
 ```
 
 `pnpm build:native` builds the addon for the host architecture. `TARGET_ARCH=arm64` and `TARGET_ARCH=x86_64` select a release architecture on matching macOS 26 runners.
-
-The verification layers and accepted design are in [the initial design notes](./docs/initial-design-notes.md). The source decisions are recorded in [`docs/adr`](./docs/adr).
 
 ## License
 

@@ -8,6 +8,7 @@ The Provider supports `SpeechTranscriber` and `DictationTranscriber`. Automatic 
 import { createAppleSpeechProvider } from '@xsai-apple-speech/transcription-native'
 
 const provider = createAppleSpeechProvider()
+// eslint-disable-next-line no-console
 console.log(await provider.isAvailable())
 ```
 
