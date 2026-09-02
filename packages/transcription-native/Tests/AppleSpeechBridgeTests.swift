@@ -237,6 +237,27 @@ private actor FinishingStreamSession: AppleSpeechStreamSessionProtocol {
 }
 
 @available(macOS 26.0, *)
+@Test func finalizesTheLatestTranscriptWithoutASecondFinalResult() {
+    var transcription = NativeTranscriptionSegments()
+    transcription.accept(NativeTranscriptionDetail(
+        alternatives: ["Construction complete"],
+        attributes: [],
+        isFinal: false,
+        range: CMTimeRange(
+            start: .zero,
+            duration: CMTime(seconds: 1, preferredTimescale: 1_000)
+        ),
+        text: "Construction complete"
+    ))
+
+    let result = transcription.finalizedResult(locale: "en-US")
+
+    #expect(result.text == "Construction complete")
+    #expect(result.results.count == 1)
+    #expect(result.results[0].isFinal)
+}
+
+@available(macOS 26.0, *)
 @Test func streamRegistryStartsWritesFinishesAndReleasesSessions() async throws {
     let session = FakeStreamSession()
     let registry = AppleSpeechStreamRegistry { _, _, _, _ in session }
