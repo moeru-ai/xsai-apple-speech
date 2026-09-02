@@ -124,6 +124,44 @@ struct NativeTranscriptionResult: Sendable {
     }
 }
 
+@available(macOS 26.0, *)
+struct NativeTranscriptionSegments: Sendable {
+    private var details: [NativeTranscriptionDetail] = []
+
+    var text: String {
+        details.map(\.text).joined().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    mutating func accept(_ result: NativeTranscriptionDetail) {
+        details.removeAll { detail in
+            rangesOverlap(detail.range, result.range)
+                && (result.isFinal || !detail.isFinal)
+        }
+        if !result.text.isEmpty {
+            details.append(result)
+        }
+        details.sort { CMTimeCompare($0.range.start, $1.range.start) < 0 }
+    }
+
+    func finalizedResult(locale: String) -> NativeTranscriptionResult {
+        // Apple may finalize a volatile range without publishing the same result again.
+        // Once the analyzer finishes successfully, every retained range is authoritative.
+        NativeTranscriptionResult(
+            locale: locale,
+            results: details.map { detail in
+                NativeTranscriptionDetail(
+                    alternatives: detail.alternatives,
+                    attributes: detail.attributes,
+                    isFinal: true,
+                    range: detail.range,
+                    text: detail.text
+                )
+            },
+            text: text
+        )
+    }
+}
+
 enum NativeTranscriber: String, Codable, Sendable {
     case automatic
     case dictation
@@ -397,13 +435,6 @@ private actor AppleSpeechStreamSession: AppleSpeechStreamSessionProtocol {
         case finishing
     }
 
-    private struct Segment {
-        let detail: NativeTranscriptionDetail
-        let isFinal: Bool
-        let range: CMTimeRange
-        let text: String
-    }
-
     private let analyzer: SpeechAnalyzer
     private let analyzerFormat: AVAudioFormat
     private let converter: AVAudioConverter?
@@ -415,8 +446,8 @@ private actor AppleSpeechStreamSession: AppleSpeechStreamSessionProtocol {
     private let transcriber: ConfiguredTranscriber
 
     private var resultTask: Task<Void, Error>?
-    private var segments: [Segment] = []
     private var state = State.active
+    private var transcription = NativeTranscriptionSegments()
 
     init(
         localeIdentifier: String,
@@ -551,11 +582,7 @@ private actor AppleSpeechStreamSession: AppleSpeechStreamSessionProtocol {
                 throw CancellationError()
             }
             state = .completed
-            return NativeTranscriptionResult(
-                locale: bcp47Identifier(locale),
-                results: segments.filter(\.isFinal).map(\.detail),
-                text: transcriptText
-            )
+            return transcription.finalizedResult(locale: bcp47Identifier(locale))
         } catch {
             if state != .disposed {
                 state = .disposed
@@ -577,25 +604,8 @@ private actor AppleSpeechStreamSession: AppleSpeechStreamSessionProtocol {
         await analyzer.cancelAndFinishNow()
     }
 
-    private var transcriptText: String {
-        segments.map(\.text).joined().trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
     private func accept(_ result: NativeTranscriptionDetail) {
-        let text = result.text
-        segments.removeAll { segment in
-            rangesOverlap(segment.range, result.range)
-                && (result.isFinal || !segment.isFinal)
-        }
-        if !text.isEmpty {
-            segments.append(Segment(
-                detail: result,
-                isFinal: result.isFinal,
-                range: result.range,
-                text: text
-            ))
-        }
-        segments.sort { CMTimeCompare($0.range.start, $1.range.start) < 0 }
+        transcription.accept(result)
 
         do {
             partial(try jsonString([
@@ -606,7 +616,7 @@ private actor AppleSpeechStreamSession: AppleSpeechStreamSessionProtocol {
                     "startMilliseconds": milliseconds(result.range.start),
                 ],
                 "result": result.jsonObject,
-                "text": transcriptText,
+                "text": transcription.text,
                 "type": "transcript.text.partial",
             ]) as NSString)
         } catch {
@@ -1271,31 +1281,21 @@ private func localeInventory(
         let file = try AVAudioFile(forReading: url)
         let analyzer = SpeechAnalyzer(modules: [transcriber.module])
         try await analyzer.setContext(try analysisContext(configuration.analysisContext))
-        let resultTask = Task { () throws -> [NativeTranscriptionDetail] in
-            var results: [NativeTranscriptionDetail] = []
+        let resultTask = Task { () throws -> NativeTranscriptionSegments in
+            var transcription = NativeTranscriptionSegments()
             switch transcriber {
             case let .speech(_, speechTranscriber):
-                for try await result in speechTranscriber.results where result.isFinal {
+                for try await result in speechTranscriber.results {
                     try Task.checkCancellation()
-                    let detail = NativeTranscriptionDetail(result)
-                    if !detail.text.trimmingCharacters(
-                        in: .whitespacesAndNewlines
-                    ).isEmpty {
-                        results.append(detail)
-                    }
+                    transcription.accept(NativeTranscriptionDetail(result))
                 }
             case let .dictation(_, dictationTranscriber):
-                for try await result in dictationTranscriber.results where result.isFinal {
+                for try await result in dictationTranscriber.results {
                     try Task.checkCancellation()
-                    let detail = NativeTranscriptionDetail(result)
-                    if !detail.text.trimmingCharacters(
-                        in: .whitespacesAndNewlines
-                    ).isEmpty {
-                        results.append(detail)
-                    }
+                    transcription.accept(NativeTranscriptionDetail(result))
                 }
             }
-            return results
+            return transcription
         }
         defer { resultTask.cancel() }
 
@@ -1308,11 +1308,9 @@ private func localeInventory(
             } else {
                 await analyzer.cancelAndFinishNow()
             }
-            let results = try await resultTask.value
-            return NativeTranscriptionResult(
-                locale: bcp47Identifier(transcriber.locale),
-                results: results,
-                text: results.map(\.text).joined(separator: " ")
+            let transcription = try await resultTask.value
+            return transcription.finalizedResult(
+                locale: bcp47Identifier(transcriber.locale)
             )
         } catch {
             resultTask.cancel()
